@@ -112,6 +112,17 @@ dict_actual_8 = \
        ]
    }
 
+dict_actual_9 = \
+    {
+        "apple": "cat",
+        "strawberry":
+        [
+            {
+                "dog": "wags",
+                "cat": "meow"
+            }
+        ]
+    }
 # ------------------ List and Dictionary objects for use on Validator Testing ------------------------------------------
 
 dict_expected_1 = \
@@ -146,9 +157,9 @@ list_expected_1 = \
 list_expected_2 = \
     [
         {
+            "pear": "fish",
             "apple": "elephant",
-            "banana": "dog",
-            "pear": "fish"
+            "banana": "dog"
         }
     ]
 
@@ -252,6 +263,18 @@ dict_expected_9 = \
           "pear",
        ]
    }
+
+dict_expected_10 = \
+{
+    "apple": "cat",
+    "strawberry": [
+        {
+            "dog": 9854,
+            "cat": "purr"
+        }
+    ]
+}
+
 keys_list_1 = ["apple", "banana"]
 
 keys_list_2 = ["banana", "pear"]
@@ -270,9 +293,25 @@ unmatched_keys_5 = [('Date time parsing failed for key: SomeDate',
                      'Expected: 2015-12-16T14:21:58Z', 'Actual: 1234-34-45')]
 unmatched_keys_6 = [('------------------\nDates Not Close Enough\nKey: SomeDate',
                      'Expected: 2015-12-16 14:21:58', 'Actual: 2015-12-16 18:21:58')]
-unmatched_keys_7 = [('------------------\nKey: AssignedDate', 'Expected: 2015-12-16T14:21:58Z', 'Actual: 1234-34-45')]
+unmatched_keys_7 = [('------------------\nKey: AssignedDate', 'Actual Date Not Correct Format:',
+                     'Expected Formats: %Y-%m-%dT%H:%M:%S', '                  %Y-%m-%dT%H:%M:%SZ',
+                     '                  %Y-%m-%dT%H:%M:%S.%f', '                  %Y-%m-%dT%H:%M:%S.%fZ',
+                     'Date: 1234-34-45')]
 unmatched_keys_8 = [('------------------\nDates Not Close Enough\nKey: AssignedDate',
                      'Expected: 2015-12-16 14:21:58', 'Actual: 2015-12-16 14:10:58')]
+unmatched_keys_9 = \
+            [
+                ('------------------\nKey: strawberry[0].dog', 'Expected: 9854', 'Actual: wags'),
+                ('------------------\nKey: strawberry[0].cat', 'Expected: purr', 'Actual: meow')
+            ]
+unmatched_keys_10 = \
+            [
+                ('------------------\nKey: strawberry[0].dog', 'Expected: 9854', 'Actual: wags')
+            ]
+unmatched_keys_11 = [('------------------\nKey: SomeDate', 'Date Not Correct Format:',
+                     'Expected Formats: %Y-%m-%dT%H:%M:%S', '                  %Y-%m-%dT%H:%M:%SZ',
+                     '                  %Y-%m-%dT%H:%M:%S.%f', '                  %Y-%m-%dT%H:%M:%S.%fZ',
+                     'Date: 1234-34-45')]
 # ---------------- Error Messages --------------------------------------------------------------------------------------
 
 not_match1 = "Key(s) Did Not Match:" \
@@ -286,6 +325,10 @@ not_match2 = "Key(s) Did Not Match:" \
              "\nKey: pear" \
              "\nExpected: fish" \
              "\nActual: bird" \
+             "\n------------------" \
+             "\nFull List Breakdown:" \
+             "\nExpected: [{'apple': 'cat', 'banana': 'dog', 'pear': 'fish'}, {'apple': 'cat', 'banana': 'mice', 'pear': 'bird'}, {'apple': 'dog', 'banana': 'mice', 'pear': 'cat'}]" \
+             "\nActual: [{'apple': 'cat', 'banana': 'dog', 'pear': 'bird'}]" \
              "\n\nPlease see differing value(s)"
 not_match3 = "Key(s) Did Not Match:" \
             "\n------------------" \
@@ -304,8 +347,12 @@ not_match_date_1 = "Key(s) Did Not Match:" \
 not_match_date_2 = "Key(s) Did Not Match:" \
                    "\n------------------" \
                    "\nKey: AssignedDate" \
-                   "\nExpected: 2015-12-16T14:21:58Z" \
-                   "\nActual: 1234-34-45" \
+                   "\nActual Date Not Correct Format:" \
+                   "\nExpected Formats: %Y-%m-%dT%H:%M:%S" \
+                   "\n                  %Y-%m-%dT%H:%M:%SZ" \
+                   "\n                  %Y-%m-%dT%H:%M:%S.%f" \
+                   "\n                  %Y-%m-%dT%H:%M:%S.%fZ" \
+                   "\nDate: 1234-34-45" \
                    "\n\nPlease see differing value(s)"
 
 not_match_date_3 = "Key(s) Did Not Match:" \
@@ -316,7 +363,18 @@ not_match_date_3 = "Key(s) Did Not Match:" \
                    "\nActual: 2015-12-16 14:10:58" \
                    "\n\nPlease see differing value(s)"
 
-id_key_err = "KeyError: u'what'"
+not_match_date_4 = "Key(s) Did Not Match:" \
+                   "\n------------------" \
+                   "\nKey: AssignedDate" \
+                   "\nExpected Date Not Correct Format:" \
+                   "\nExpected Formats: %Y-%m-%dT%H:%M:%S" \
+                   "\n                  %Y-%m-%dT%H:%M:%SZ" \
+                   "\n                  %Y-%m-%dT%H:%M:%S.%f" \
+                   "\n                  %Y-%m-%dT%H:%M:%S.%fZ" \
+                   "\nDate: 1234-11-30" \
+                   "\n\nPlease see differing value(s)"
+
+id_key_err = 'KeyError: "what" Key was not in the response'
 
 id_key_err_2 = "Item was not within the response:" \
                "\n{'pear': 'fish', 'apple': 'elephant', 'banana': 'dog'}"
@@ -325,11 +383,15 @@ top_only_err = "Key(s) Did Not Match:" \
                "\nKey: size" \
                "\nExpected: large" \
                "\nActual: small" \
+               "\n------------------" \
+               "\nFull List Breakdown:" \
+               "\nExpected: [{'apple': 'cat', 'banana': 'dog', 'pear': {'color': 'green', 'size': 'large'}}]" \
+               "\nActual: [{'apple': 'cat', 'banana': 'dog', 'pear': {'color': 'green', 'size': 'small'}}]" \
                "\n\nPlease see differing value(s)"
 
 list_dict_err = "Collections not the same length:" \
                 "\nActual length: 3" \
-                "\nExpected length 4"
+                "\nExpected length 5"
 
 only_keys_err_1 = "The value for the key 'apple' doesn't match the response:" \
                   "\nExpected: elephant" \
@@ -339,18 +401,17 @@ only_keys_err_2 = "The response does not contain the key 'orange'"
 
 no_items_err_1 = "API is returning 1 instead of the expected 2 result(s)."
 
-not_list_err_1 = "TypeError: The response is not a list:" \
+not_list_err_1 = "The response is not a list:" \
                  "\nActual Response:" \
-                 "\n{u'pear': u'fish', u'apple': u'cat', u'banana': u'dog'}"
+                 "\n{'apple': 'cat', 'banana': 'dog', 'pear': 'fish'}"
 
 bad_value_err = "The value for the key you provided doesn't match the response:" \
                 "\nExpected: dog" \
                 "\nActual: cat"
 
-bad_key_err = "KeyError: u'The response does not contain the key you provided: mango'"
+bad_key_err = "KeyError: 'The response does not contain the key you provided: mango'"
 
-date_type_err = "TypeError: must be string, not None"
-date_value_err = "ValueError: time data '2015-12-16T14:21:58Z' does not match format '%Y-%m-%dT%H:%M:%S.%fZ'"
+date_type_err = "TypeError: strptime() argument 1 must be str, not None"
 
 empty_resp_err = "The Actual Response is Empty."
 
@@ -358,6 +419,20 @@ bad_array_err_1 = "Arrays do not match:" \
                 "\nExpected: ['str', 'aw', 'ber', 'ry']" \
                 "\nActual: ['dog', 'cat', 'bird', 'elephant']"
 # -------------- Date Methods Test Data --------------------------------------------------------------------------------
+json_wo_example = """
+    {
+        "AssignedDate": "2015-12-16T14:10:58Z",
+        "NoneField": null,
+        "CreateDate": "2015-12-16T14:21:58Z",
+        "CreatedByEmail": "",
+        "CreatedByExternalId": "360API_ExtID_User318",
+        "CreatedByFirstName": "MyCompanyOnlyRight",
+        "CreatedById": "318",
+        "CreatedByLastName": "GETWOUserWith",
+        "CreatedByPhone": "(444) 444-4444"
+    }
+"""
+
 json_wo_date_none = """
     {
         "AssignedDate": null,
@@ -414,6 +489,31 @@ wo_example = \
     "CreatedByPhone": "(444) 444-4444"
 }
 
+wo_example_2 = \
+{
+    "AssignedDate": "2015-12-16T16:21:58Z",
+    "NoneField": None,
+    "CreateDate": "2015-12-16T14:21:58Z",
+    "CreatedByEmail": "",
+    "CreatedByExternalId": "360API_ExtID_User318",
+    "CreatedByFirstName": "MyCompanyOnlyRight",
+    "CreatedById": "318",
+    "CreatedByLastName": "GETWOUserWith",
+    "CreatedByPhone": "(444) 444-4444"
+}
+
+wo_bad_date_example = \
+{
+    "AssignedDate": "1234-11-30",
+    "NoneField": None,
+    "CreateDate": "2015-12-16T14:21:58Z",
+    "CreatedByEmail": "",
+    "CreatedByExternalId": "360API_ExtID_User318",
+    "CreatedByFirstName": "MyCompanyOnlyRight",
+    "CreatedById": "318",
+    "CreatedByLastName": "GETWOUserWith",
+    "CreatedByPhone": "(444) 444-4444"
+}
 
 wo_example_none = \
 {
